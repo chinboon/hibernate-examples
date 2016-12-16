@@ -2,9 +2,9 @@ package com.github.chinboon.hibernate_examples.hibernate_52_jdk_8_eap_7_db2_97.d
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Configuration;
 import org.springframework.stereotype.Repository;
 
 import com.github.chinboon.hibernate_examples.hibernate_52_jdk_8_eap_7_db2_97.data.hbm.Account;
@@ -25,18 +25,12 @@ public class AccountTable {
 	 * @since 1.0.0
 	 */
 	private void setup() {
-		// hibernate.cfg.xml
-		final StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure("hibernate.cfg.xml").build();
+		// laods hibernate.cfg.xml
+		Configuration configuration = new Configuration().configure();
+		StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder()
+				.applySettings(configuration.getProperties());
+		this.sessionFactory = configuration.buildSessionFactory(builder.build());
 
-		try {
-			this.sessionFactory = new MetadataSources(registry).buildMetadata().buildSessionFactory();
-
-		} catch (Exception e) {
-			// The registry would be destroyed by the SessionFactory, but we had
-			// trouble building the SessionFactory
-			// so destroy it manually.
-			StandardServiceRegistryBuilder.destroy(registry);
-		}
 	}
 
 	/**
